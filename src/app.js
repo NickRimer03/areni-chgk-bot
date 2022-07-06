@@ -3,11 +3,29 @@ import texts from "./texts.js";
 import { initDB, getQuestion } from "./data.js";
 import { picFilter, imgUrl, globalData } from "../config.js";
 
-const { attention, next, more, confirmNext, code, bingo, comment, answer, help, error, stop } =
-  texts;
+const {
+  attention,
+  next,
+  more,
+  confirmNext,
+  code,
+  bingo,
+  comment,
+  answer,
+  help,
+  error,
+  stop,
+  hint,
+  repeat,
+} = texts;
 
 export default () => {
   const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+
+  // TODO: команда для повтора вопроса
+  // TODO: система подсчёта очков
+  // TODO: в ответе показывать зачётные варианты (если таковые есть)
+  // TODO: улучшить подсказку по символам
 
   /**
    * Read user answer
@@ -82,6 +100,28 @@ export default () => {
 
     bot.sendMessage(id, text, { parse_mode: "HTML" });
     globalData.gameInProgress = false;
+  });
+
+  /**
+   * Ask bot to give a hint
+   */
+  bot.onText(/\/hint/, ({ chat: { id } }) => {
+    if (!globalData.gameInProgress) {
+      return;
+    }
+
+    bot.sendMessage(id, hint + globalData.current.answerf.replace(/\S/g, "*"));
+  });
+
+  /**
+   * Ask bot to repeat question
+   */
+  bot.onText(/\/repeat/, ({ chat: { id } }) => {
+    if (!globalData.gameInProgress) {
+      return;
+    }
+
+    bot.sendMessage(id, repeat + answer[0] + globalData.current.question + answer[1]);
   });
 
   /**
