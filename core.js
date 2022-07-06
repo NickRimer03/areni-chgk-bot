@@ -1,7 +1,5 @@
 import app from "./src/app.js";
 
-const devImport = [import("dotenv"), import("path")];
-
 if (process.env.MODE !== "production") {
   (async () => {
     const [
@@ -9,7 +7,7 @@ if (process.env.MODE !== "production") {
         default: { config },
       },
       path,
-    ] = await Promise.all(devImport);
+    ] = await Promise.all([import("dotenv"), import("path")]);
 
     config({ path: path.resolve() + "/.env" });
     app();
