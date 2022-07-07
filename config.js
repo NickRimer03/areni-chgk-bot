@@ -1,4 +1,4 @@
-export const filter = new RegExp(/[.,:;«»()"'\-\[\]]/g);
+export const filter = new RegExp(/[.,:;!«»()"'\-\[\]]/g);
 export const picFilter = new RegExp(/\d+.[a-zA-Z]{3,4}/);
 
 export const apiUrl = "http://www.db.chgk.info";

@@ -17,6 +17,9 @@ const {
   stop,
   hint,
   repeat,
+  wrong,
+  wrongLength,
+  rightLength,
 } = texts;
 
 export default () => {
@@ -36,8 +39,10 @@ export default () => {
     }
 
     const { comment: commentary } = globalData.current;
+    const userAnswer = match[1].toLowerCase();
+    const gameAnswer = globalData.current.answerf;
 
-    if (match[1].toLowerCase() === globalData.current.answerf) {
+    if (userAnswer === gameAnswer) {
       const text =
         bingo +
         code[0] +
@@ -48,6 +53,25 @@ export default () => {
 
       bot.sendMessage(id, text, { parse_mode: "HTML" });
       globalData.gameInProgress = false;
+    } else {
+      let subtext = "";
+
+      if (gameAnswer.length !== userAnswer.length) {
+        subtext = wrongLength;
+      } else {
+        let matches = 0;
+
+        for (const [i, c] of [...gameAnswer].entries()) {
+          if (c === userAnswer[i]) {
+            matches += 1;
+          }
+        }
+
+        const percent = Math.round((matches * 100) / gameAnswer.length);
+        subtext = matches + rightLength + `(${percent}%)`;
+      }
+
+      bot.sendMessage(id, wrong + subtext);
     }
   });
 
