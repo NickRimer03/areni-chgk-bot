@@ -2,6 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import texts from "./texts.js";
 import { initDB, getQuestion } from "./data.js";
 import { picFilter, imgUrl, globalData } from "../config.js";
+import { filterText } from "./utils.js";
 
 const {
   attention,
@@ -25,7 +26,6 @@ const {
 export default () => {
   const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
-  // TODO: команда для повтора вопроса
   // TODO: система подсчёта очков
   // TODO: в ответе показывать зачётные варианты (если таковые есть)
   // TODO: улучшить подсказку по символам
@@ -39,8 +39,11 @@ export default () => {
     }
 
     const { comment: commentary } = globalData.current;
-    const userAnswer = match[1].toLowerCase();
+    const userAnswer = filterText(match[1]);
     const gameAnswer = globalData.current.answerf;
+
+    const userAnswerNoSpace = userAnswer.replace(/\s+/g, "");
+    const gameAnswerNoSpace = gameAnswer.replace(/\s+/g, "");
 
     if (userAnswer === gameAnswer) {
       const text =
@@ -61,13 +64,13 @@ export default () => {
       } else {
         let matches = 0;
 
-        for (const [i, c] of [...gameAnswer].entries()) {
-          if (c === userAnswer[i]) {
+        for (const [i, c] of [...gameAnswerNoSpace].entries()) {
+          if (c === userAnswerNoSpace[i]) {
             matches += 1;
           }
         }
 
-        const percent = Math.round((matches * 100) / gameAnswer.length);
+        const percent = Math.round((matches * 100) / gameAnswerNoSpace.length);
         subtext = matches + rightLength + `(${percent}%)`;
       }
 
