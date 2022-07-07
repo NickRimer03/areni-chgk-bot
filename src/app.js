@@ -2,7 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import texts from "./texts.js";
 import { initDB, getQuestion } from "./data.js";
 import { picFilter, imgUrl, globalData } from "../config.js";
-import { filterText } from "./utils.js";
+import { filterText, removeAllSpaces, hintizer } from "./utils.js";
 
 const {
   attention,
@@ -42,8 +42,8 @@ export default () => {
     const userAnswer = filterText(match[1]);
     const gameAnswer = globalData.current.answerf;
 
-    const userAnswerNoSpace = userAnswer.replace(/\s+/g, "");
-    const gameAnswerNoSpace = gameAnswer.replace(/\s+/g, "");
+    const userAnswerNoSpace = removeAllSpaces(userAnswer);
+    const gameAnswerNoSpace = removeAllSpaces(gameAnswer);
 
     if (userAnswer === gameAnswer) {
       const text =
@@ -57,7 +57,7 @@ export default () => {
       bot.sendMessage(id, text, { parse_mode: "HTML" });
       globalData.gameInProgress = false;
     } else {
-      let subtext = "";
+      let subtext;
 
       if (gameAnswer.length !== userAnswer.length) {
         subtext = wrongLength;
@@ -137,7 +137,7 @@ export default () => {
       return;
     }
 
-    bot.sendMessage(id, hint + globalData.current.answerf.replace(/\S/g, "*"));
+    bot.sendMessage(id, hint + hintizer(globalData.current.answerf));
   });
 
   /**

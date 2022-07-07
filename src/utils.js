@@ -13,11 +13,19 @@ export function getTourById(id) {
 }
 
 export function filterText(text) {
-  return text.replace(filter, "").replace(/\s+/g, " ").toLowerCase();
+  return text.replace(filter, "").replace(/\s+/g, " ").toLowerCase().trim();
 }
 
 export function filterLineBreaks(text) {
   return text === null ? null : text.replace(/\n/g, " ");
+}
+
+export function removeAllSpaces(text) {
+  return text.replace(/\s+/g, "");
+}
+
+export function hintizer(text) {
+  return text.replace(/[^-\s]/g, "*");
 }
 
 export default {
@@ -26,4 +34,6 @@ export default {
   getTourById,
   filterText,
   filterLineBreaks,
+  removeAllSpaces,
+  hintizer,
 };
