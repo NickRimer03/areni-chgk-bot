@@ -74,7 +74,7 @@ export default () => {
         subtext = matches + rightLength + `(${percent}%)`;
       }
 
-      bot.sendMessage(id, wrong + subtext);
+      bot.sendMessage(id, wrong + subtext + answer[1]);
     }
   });
 
